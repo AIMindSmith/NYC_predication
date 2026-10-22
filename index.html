@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Airbnb Room Type Predictor</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background Blobs -->
+    <div class="bg-animation">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="status-badge" id="api-status">
+                <span class="dot"></span>
+                <span id="status-text">Checking FastAPI Server...</span>
+            </div>
+            <h1>🗽 NYC Listing AI Predictor</h1>
+            <p>Predict the exact Room Type & Probability using Machine Learning</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Form Card -->
+            <div class="glass-card form-card">
+                <div class="card-header">
+                    <h2>Listing Details</h2>
+                    <button type="button" class="btn-preset" id="fill-sample">✨ Auto-Fill Sample</button>
+                </div>
+
+                <form id="predict-form">
+                    <div class="form-row">
+                        <!-- Neighbourhood Group -->
+                        <div class="input-group">
+                            <label for="neighbourhood_group">Borough (Neighbourhood Group)</label>
+                            <select id="neighbourhood_group" required>
+                                <option value="" disabled selected>Select Borough</option>
+                                <option value="Manhattan">Manhattan</option>
+                                <option value="Brooklyn">Brooklyn</option>
+                                <option value="Queens">Queens</option>
+                                <option value="Bronx">Bronx</option>
+                                <option value="Staten Island">Staten Island</option>
+                            </select>
+                        </div>
+
+                        <!-- Neighbourhood -->
+                        <div class="input-group">
+                            <label for="neighbourhood">Neighbourhood</label>
+                            <input type="text" id="neighbourhood" list="neighbourhood-list" placeholder="e.g. Williamsburg" minlength="2" required>
+                            <datalist id="neighbourhood-list"></datalist>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Latitude -->
+                        <div class="input-group">
+                            <label for="latitude">Latitude (-90 to 90)</label>
+                            <input type="number" id="latitude" step="any" min="-90" max="90" placeholder="40.7128" required>
+                        </div>
+
+                        <!-- Longitude -->
+                        <div class="input-group">
+                            <label for="longitude">Longitude (-180 to 180)</label>
+                            <input type="number" id="longitude" step="any" min="-180" max="180" placeholder="-74.0060" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Price -->
+                        <div class="input-group">
+                            <label for="price">Nightly Price ($)</label>
+                            <input type="number" id="price" step="any" min="0.01" placeholder="150" required>
+                        </div>
+
+                        <!-- Minimum Nights -->
+                        <div class="input-group">
+                            <label for="minimum_nights">Minimum Nights (1 - 365)</label>
+                            <input type="number" id="minimum_nights" min="1" max="365" placeholder="3" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Number of Reviews -->
+                        <div class="input-group">
+                            <label for="number_of_reviews">Total Reviews (≥ 0)</label>
+                            <input type="number" id="number_of_reviews" min="0" placeholder="45" required>
+                        </div>
+
+                        <!-- Reviews per Month -->
+                        <div class="input-group">
+                            <label for="reviews_per_month">Reviews / Month (≥ 0)</label>
+                            <input type="number" id="reviews_per_month" step="any" min="0" placeholder="1.8" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Calculated Host Listings Count -->
+                        <div class="input-group">
+                            <label for="calculated_host_listings_count">Host Listings Count (≥ 0)</label>
+                            <input type="number" id="calculated_host_listings_count" min="0" placeholder="1" required>
+                        </div>
+
+                        <!-- Availability 365 -->
+                        <div class="input-group">
+                            <label for="availability_365">Availability / Year (0 - 365)</label>
+                            <input type="number" id="availability_365" min="0" max="365" placeholder="210" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submit-btn">
+                        <span class="btn-text">🚀 Predict Room Type</span>
+                        <div class="spinner hidden" id="spinner"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Results Card -->
+            <div class="glass-card result-card">
+                <h2>Prediction Output</h2>
+                
+                <!-- Idle State -->
+                <div id="idle-state" class="idle-state">
+                    <div class="city-icon">🏙️</div>
+                    <p>Enter NYC listing coordinates, pricing, and review metrics to predict the room category and confidence distribution.</p>
+                </div>
+
+                <!-- Error Box -->
+                <div id="error-box" class="error-box hidden"></div>
+
+                <!-- Active Result State -->
+                <div id="result-content" class="result-content hidden">
+                    <div class="prediction-banner">
+                        <span class="label">Predicted Category</span>
+                        <h3 id="predicted-room">Entire home/apt</h3>
+                        <span class="confidence-pill" id="top-confidence">Confidence: 88%</span>
+                    </div>
+
+                    <div class="prob-section">
+                        <h4>Model Probability Breakdown</h4>
+                        <div id="prob-bars" class="prob-bars"></div>
+                    </div>
+
+                    <div class="raw-json">
+                        <h4>Raw API Response</h4>
+                        <pre id="json-output"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
